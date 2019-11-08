@@ -14,9 +14,9 @@ namespace CSVReaderNestedLists
             this.csvFilePath = csvfilepath;
         }
 
-        public List<Country> ReadAllCountries()
+        public Dictionary<string,List<Country>> ReadAllCountries()
         {
-            List<Country> countries = new List<Country>();
+            var countries = new Dictionary<string,List<Country>>();
 
             using (StreamReader sr = new StreamReader(csvFilePath))
             {
@@ -25,8 +25,17 @@ namespace CSVReaderNestedLists
                 string csvline;
                 while ((csvline = sr.ReadLine()) != null)
                 {
-                    
-                    countries.Add(ReadCountryFromCsvLine(csvline));
+
+                    Country country = ReadCountryFromCsvLine(csvline);
+                    if (countries.ContainsKey(country.Region))
+                    {
+                        countries[country.Region].Add(country);
+                    }
+                    else
+                    {
+                        List<Country> countriesInRegion = new List<Country>() { country };
+                        countries.Add(country.Region, countriesInRegion);
+                    }
                 }
             }
 
