@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CSVReaderNestedLists
 {
@@ -7,18 +8,28 @@ namespace CSVReaderNestedLists
     {
         static void Main(string[] args)
         {
-            string filepath = @"C:\Repos\CsvReaderList\CountryPopulations.csv";
+            string filepath = @"D:\Repos\CSVReaderNestedLists\CountryPopulations.csv";
 
             Reader csvreader = new Reader(filepath);
 
-            List<Country> countries = csvreader.ReadAllCountries();
-            
-
-            foreach(Country country in countries)
+            Dictionary<string,List<Country>> countries = csvreader.ReadAllCountries();
+            foreach (string region in countries.Keys)
             {
-                Console.WriteLine($"{Formatter.FormatPopulation(country.Population).PadLeft(15)}: {country.Name}");
+                Console.WriteLine(region);
             }
-            Console.WriteLine($"{countries.Count} countries");
+
+            Console.Write("Which of the above regions do you want?");
+            string chosenRegion = Console.ReadLine();
+
+            if (countries.ContainsKey(chosenRegion))
+            {
+                foreach (Country country in countries[chosenRegion].Take(10))
+                {
+                    Console.WriteLine($"{Formatter.FormatPopulation(country.Population).PadLeft(15)}: { country.Name}");
+                }         
+            }
+            else
+            Console.WriteLine("That is not a valid region");
         }
     }
 }
